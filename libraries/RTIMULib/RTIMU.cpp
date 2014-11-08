@@ -46,6 +46,10 @@
 #include "RTIMUMPU9150.h"
 #endif
 
+#if defined(MPU9250_68) || defined(MPU9250_69)
+#include "RTIMUMPU9250.h"
+#endif
+
 #if defined(LSM9DS0_6a) || defined(LSM9DS0_6b)
 #include "RTIMULSM9DS0.h"
 #endif
@@ -62,6 +66,9 @@ RTIMU *RTIMU::createIMU(RTIMUSettings *settings)
 {
 #if defined(MPU9150_68) || defined(MPU9150_69)
     return new RTIMUMPU9150(settings);
+#endif
+#if defined(MPU9250_68) || defined(MPU9250_69)
+    return new RTIMUMPU9250(settings);
 #endif
 #if defined(LSM9DS0_6a) || defined(LSM9DS0_6b)
     return new RTIMULSM9DS0(settings);

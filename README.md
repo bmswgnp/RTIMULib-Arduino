@@ -2,11 +2,28 @@
 
 RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino and obtain full fused quaternion or Euler angle pose data.
 
+Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncommenting one of the supported IMUs like this:
+
+	#define MPU9150_68                      // MPU9150 at address 0x68
+	//#define MPU9150_69                      // MPU9150 at address 0x69
+	//#define MPU9250_68                      // MPU9250 at address 0x68
+	//#define MPU9250_69                      // MPU9250 at address 0x69
+	//#define LSM9DS0_6a                      // LSM9DS0 at address 0x6a
+	//#define LSM9DS0_6b                      // LSM9DS0 at address 0x6b
+	//#define GD20HM303D_6a                   // GD20H + M303D at address 0x6a
+	//#define GD20HM303D_6b                   // GD20H + M303D at address 0x6b
+	//#define GD20M303DLHC_6a                 // GD20 + M303DLHC at address 0x6a
+	//#define GD20M303DLHC_6b                 // GD20 + M303DLHC at address 0x6b
+
 Check out www.richards-tech.com for more details, updates and news.
 
 ## Release history
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
+
+### November 8 2014 - 2.4.0
+
+Added support for the InvenSense MPU-9250 using the I2C interface.
 
 ### October 9 2014 - 2.3.1
 

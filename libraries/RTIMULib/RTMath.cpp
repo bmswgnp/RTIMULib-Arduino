@@ -41,6 +41,14 @@ void RTMath::displayDegrees(const char *label, RTVector3& vec)
     Serial.print(" z:"); Serial.print(vec.z() * RTMATH_RAD_TO_DEGREE);
 }
 
+void RTMath::displayRollPitchYaw(const char *label, RTVector3& vec)
+{
+    Serial.print(label);
+    Serial.print(" roll:"); Serial.print(vec.x() * RTMATH_RAD_TO_DEGREE);
+    Serial.print(" pitch:"); Serial.print(vec.y() * RTMATH_RAD_TO_DEGREE);
+    Serial.print(" yaw:"); Serial.print(vec.z() * RTMATH_RAD_TO_DEGREE);
+}
+
 void RTMath::display(const char *label, RTQuaternion& quat)
 {
     Serial.print(label);

@@ -55,6 +55,7 @@ public:
 
     static void display(const char *label, RTVector3& vec);
     static void displayDegrees(const char *label, RTVector3& vec);
+    static void displayRollPitchYaw(const char *label, RTVector3& vec);
     static void display(const char *label, RTQuaternion& quat);
 
     //  poseFromAccelMag generates pose Euler angles from measured settings

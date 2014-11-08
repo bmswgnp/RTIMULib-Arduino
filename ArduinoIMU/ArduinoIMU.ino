@@ -90,7 +90,7 @@ void loop()
 //      RTMath::display("Gyro:", (RTVector3&)imu->getGyro());                // gyro data
 //      RTMath::display("Accel:", (RTVector3&)imu->getAccel());              // accel data
 //      RTMath::display("Mag:", (RTVector3&)imu->getCompass());              // compass data
-      RTMath::displayDegrees("Pose:", (RTVector3&)fusion.getFusionPose()); // fused output
+      RTMath::displayRollPitchYaw("Pose:", (RTVector3&)fusion.getFusionPose()); // fused output
       Serial.println();
     }
   }

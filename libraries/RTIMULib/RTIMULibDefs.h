@@ -30,6 +30,8 @@
 
 #define MPU9150_68                      // MPU9150 at address 0x68
 //#define MPU9150_69                      // MPU9150 at address 0x69
+//#define MPU9250_68                      // MPU9250 at address 0x68
+//#define MPU9250_69                      // MPU9250 at address 0x69
 //#define LSM9DS0_6a                      // LSM9DS0 at address 0x6a
 //#define LSM9DS0_6b                      // LSM9DS0 at address 0x6b
 //#define GD20HM303D_6a                   // GD20H + M303D at address 0x6a
@@ -43,5 +45,6 @@
 #define RTIMU_TYPE_LSM9DS0                  2                   // STM LSM9DS0 (eg Sparkfun IMU)
 #define RTIMU_TYPE_GD20HM303D               3                   // STM L3GD20H/LSM303D (Pololu Altimu)
 #define RTIMU_TYPE_GD20M303DLHC             4                   // STM L3GD20/LSM303DHLC (Adafruit IMU)
+#define RTIMU_TYPE_MPU9250                  5                   // InvenSense MPU9250
 
 #endif // _RTIMULIBDEFS_H
