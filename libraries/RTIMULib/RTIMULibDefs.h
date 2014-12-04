@@ -47,4 +47,38 @@
 #define RTIMU_TYPE_GD20M303DLHC             4                   // STM L3GD20/LSM303DHLC (Adafruit IMU)
 #define RTIMU_TYPE_MPU9250                  5                   // InvenSense MPU9250
 
+//  Axis rotation defs
+//
+//  These allow the IMU to be virtually repositioned if it is in a non-standard configuration
+//  Standard configuration is X pointing at north, Y pointing east and Z pointing down
+//  with the IMU horizontal. There are 24 different possible orientations as defined
+//  below. Setting the axis rotation code to non-zero values performs the repositioning.
+//
+//  Uncomment the one required
+
+#define RTIMU_XNORTH_YEAST              0                   // this is the default identity matrix
+//#define RTIMU_XEAST_YSOUTH              1
+//#define RTIMU_XSOUTH_YWEST              2
+//#define RTIMU_XWEST_YNORTH              3
+//#define RTIMU_XNORTH_YWEST              4
+//#define RTIMU_XEAST_YNORTH              5
+//#define RTIMU_XSOUTH_YEAST              6
+//#define RTIMU_XWEST_YSOUTH              7
+//#define RTIMU_XUP_YNORTH                8
+//#define RTIMU_XUP_YEAST                 9
+//#define RTIMU_XUP_YSOUTH                10
+//#define RTIMU_XUP_YWEST                 11
+//#define RTIMU_XDOWN_YNORTH              12
+//#define RTIMU_XDOWN_YEAST               13
+//#define RTIMU_XDOWN_YSOUTH              14
+//#define RTIMU_XDOWN_YWEST               15
+//#define RTIMU_XNORTH_YUP                16
+//#define RTIMU_XEAST_YUP                 17
+//#define RTIMU_XSOUTH_YUP                18
+//#define RTIMU_XWEST_YUP                 19
+//#define RTIMU_XNORTH_YDOWN              20
+//#define RTIMU_XEAST_YDOWN               21
+//#define RTIMU_XSOUTH_YDOWN              22
+//#define RTIMU_XWEST_YDOWN               23
+
 #endif // _RTIMULIBDEFS_H

@@ -322,7 +322,7 @@ bool RTIMULSM9DS0::IMURead()
     if (!I2Cdev::readByte(m_gyroSlaveAddr, LSM9DS0_GYRO_STATUS, &status))
         return false;
 
-    if ((status && 0x8) == 0)
+    if ((status & 0x8) == 0)
         return false;
 
     if (!I2Cdev::readBytes(m_gyroSlaveAddr, 0x80 | LSM9DS0_GYRO_OUT_X_L, 6, gyroData))

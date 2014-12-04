@@ -462,6 +462,12 @@ bool RTIMUMPU9250::IMURead()
 
     m_accel.setX(-m_accel.x());
 
+    //  use the fuse data adjustments for compass
+
+    m_compass.setX(m_compass.x() * m_compassAdjust[0]);
+    m_compass.setY(m_compass.y() * m_compassAdjust[1]);
+    m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
+
     //  sort out compass axes
 
     float temp;
@@ -469,12 +475,6 @@ bool RTIMUMPU9250::IMURead()
     temp = m_compass.x();
     m_compass.setX(m_compass.y());
     m_compass.setY(-temp);
-
-    //  use the fuse data adjustments
-
-    m_compass.setX(m_compass.x() * m_compassAdjust[0]);
-    m_compass.setY(m_compass.y() * m_compassAdjust[1]);
-    m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
 
     //  now do standard processing
 

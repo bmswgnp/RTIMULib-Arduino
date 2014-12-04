@@ -336,7 +336,7 @@ bool RTIMUGD20M303DLHC::IMURead()
     if (!I2CRead(m_gyroSlaveAddr, L3GD20_STATUS, 1, &status))
         return false;
 
-    if ((status && 0x8) == 0)
+    if ((status & 0x8) == 0)
         return false;
 
     if (!I2CRead(m_gyroSlaveAddr, 0x80 | L3GD20_OUT_X_L, 6, gyroData))

@@ -41,6 +41,104 @@
 
 #define RTIMU_FUZZY_ACCEL_ZERO_SQUARED   (RTIMU_FUZZY_ACCEL_ZERO * RTIMU_FUZZY_ACCEL_ZERO)
 
+//  Axis rotation array
+
+#ifdef RTIMU_XNORTH_YEAST
+RTFLOAT RTIMU::m_axisRotation[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+#endif
+
+#ifdef RTIMU_XEAST_YSOUTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, -1, 0, 1, 0, 0, 0, 0, 1};
+#endif
+
+#ifdef RTIMU_XSOUTH_YWEST
+RTFLOAT RTIMU::m_axisRotation[9] = {-1, 0, 0, 0, -1, 0, 0, 0, 1};
+#endif
+
+#ifdef RTIMU_XWEST_YNORTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 1, 0, -1, 0, 0, 0, 0, 1};
+#endif
+
+#ifdef RTIMU_XNORTH_YWEST
+RTFLOAT RTIMU::m_axisRotation[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+#endif
+
+#ifdef RTIMU_XEAST_YNORTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 1, 0, 1, 0, 0, 0, 0, -1};
+#endif
+
+#ifdef RTIMU_XSOUTH_YEAST
+RTFLOAT RTIMU::m_axisRotation[9] = {-1, 0, 0, 0, 1, 0, 0, 0, -1};
+#endif
+
+#ifdef RTIMU_XWEST_YSOUTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
+#endif
+
+#ifdef RTIMU_XUP_YNORTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 1, 0, 0, 0, -1, -1, 0, 0};
+#endif
+
+#ifdef RTIMU_XUP_YEAST
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, 1, 0, 1, 0, -1, 0, 0};
+#endif
+
+#ifdef RTIMU_XUP_YSOUTH
+    {0, -1, 0, 0, 0, 1, -1, 0, 0};
+#endif
+
+#ifdef RTIMU_XUP_YWEST
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, -1, 0, -1, 0, -1, 0, 0};
+#endif
+
+#ifdef RTIMU_XDOWN_YNORTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 1, 0, 0, 0, 1, 1, 0, 0};
+#endif
+
+#ifdef RTIMU_XDOWN_YEAST
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, -1, 0, 1, 0, 1, 0, 0};
+#endif
+
+#ifdef RTIMU_XDOWN_YSOUTH
+RTFLOAT RTIMU::m_axisRotation[9] = {0, -1, 0, 0, 0, -1, 1, 0, 0};
+#endif
+
+#ifdef RTIMU_XDOWN_YWEST
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, 1, 0, -1, 0, 1, 0, 0};
+#endif
+
+#ifdef RTIMU_XNORTH_YUP
+RTFLOAT RTIMU::m_axisRotation[9] = {1, 0, 0, 0, 0, 1, 0, -1, 0};
+#endif
+
+#ifdef RTIMU_XEAST_YUP
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, -1, 1, 0, 0, 0, -1, 0};
+#endif
+
+#ifdef RTIMU_XSOUTH_YUP
+RTFLOAT RTIMU::m_axisRotation[9] = {-1, 0, 0, 0, 0, -1, 0, -1, 0};
+#endif
+
+#ifdef RTIMU_XWEST_YUP
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, 1, -1, 0, 0, 0, -1, 0};
+#endif
+
+#ifdef RTIMU_XNORTH_YDOWN
+RTFLOAT RTIMU::m_axisRotation[9] = {1, 0, 0, 0, 0, -1, 0, 1, 0};
+#endif
+
+#ifdef RTIMU_XEAST_YDOWN
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, 1, 1, 0, 0, 0, 1, 0};
+#endif
+
+#ifdef RTIMU_XSOUTH_YDOWN
+RTFLOAT RTIMU::m_axisRotation[9] = {-1, 0, 0, 0, 0, 1, 0, 1, 0};
+#endif
+
+#ifdef RTIMU_XWEST_YDOWN
+RTFLOAT RTIMU::m_axisRotation[9] = {0, 0, -1, -1, 0, 0, 0, 1, 0};
+#endif
+
 
 #if defined(MPU9150_68) || defined(MPU9150_69)
 #include "RTIMUMPU9150.h"
@@ -134,8 +232,65 @@ void RTIMU::gyroBiasInit()
     m_gyroSampleCount = 0;
 }
 
+//  Note - code assumes that this is the first thing called after axis swapping
+//  for each specific IMU chip has occurred.
+
 void RTIMU::handleGyroBias()
 {
+    // do axis rotation if necessary
+#ifndef  RTIMU_XNORTH_YEAST
+    // need to do an axis rotation
+    float *matrix = m_axisRotation;
+    RTVector3 tempGyro = m_gyro;
+    RTVector3 tempAccel = m_accel;
+    RTVector3 tempCompass = m_compass;
+
+    // do new x value
+    if (matrix[0] != 0) {
+        m_gyro.setX(tempGyro.x() * matrix[0]);
+        m_accel.setX(tempAccel.x() * matrix[0]);
+        m_compass.setX(tempCompass.x() * matrix[0]);
+    } else if (matrix[1] != 0) {
+        m_gyro.setX(tempGyro.y() * matrix[1]);
+        m_accel.setX(tempAccel.y() * matrix[1]);
+        m_compass.setX(tempCompass.y() * matrix[1]);
+    } else if (matrix[2] != 0) {
+        m_gyro.setX(tempGyro.z() * matrix[2]);
+        m_accel.setX(tempAccel.z() * matrix[2]);
+        m_compass.setX(tempCompass.z() * matrix[2]);
+    }
+
+    // do new y value
+    if (matrix[3] != 0) {
+        m_gyro.setY(tempGyro.x() * matrix[3]);
+        m_accel.setY(tempAccel.x() * matrix[3]);
+        m_compass.setY(tempCompass.x() * matrix[3]);
+    } else if (matrix[4] != 0) {
+        m_gyro.setY(tempGyro.y() * matrix[4]);
+        m_accel.setY(tempAccel.y() * matrix[4]);
+        m_compass.setY(tempCompass.y() * matrix[4]);
+    } else if (matrix[5] != 0) {
+        m_gyro.setY(tempGyro.z() * matrix[5]);
+        m_accel.setY(tempAccel.z() * matrix[5]);
+        m_compass.setY(tempCompass.z() * matrix[5]);
+    }
+
+    // do new z value
+    if (matrix[6] != 0) {
+        m_gyro.setZ(tempGyro.x() * matrix[6]);
+        m_accel.setZ(tempAccel.x() * matrix[6]);
+        m_compass.setZ(tempCompass.x() * matrix[6]);
+    } else if (matrix[7] != 0) {
+        m_gyro.setZ(tempGyro.y() * matrix[7]);
+        m_accel.setZ(tempAccel.y() * matrix[7]);
+        m_compass.setZ(tempCompass.y() * matrix[7]);
+    } else if (matrix[8] != 0) {
+        m_gyro.setZ(tempGyro.z() * matrix[8]);
+        m_accel.setZ(tempAccel.z() * matrix[8]);
+        m_compass.setZ(tempCompass.z() * matrix[8]);
+    }
+#endif
+    
     RTVector3 deltaAccel = m_previousAccel;
     deltaAccel -= m_accel;   // compute difference
     m_previousAccel = m_accel;

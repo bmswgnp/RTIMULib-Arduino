@@ -107,6 +107,8 @@ protected:
     float m_compassCalScale[3];
     RTVector3 m_compassAverage;                             // a running average to smooth the mag outputs
 
+    static float m_axisRotation[9];                         // axis rotation matrix
+
  };
 
 #endif // _RTIMU_H
