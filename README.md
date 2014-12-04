@@ -21,6 +21,12 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### December 4 2014 - 2.5.0
+
+Added the ability to change IMU orientation - see libraries/RTIMULib/RTIMULibDefs.h for more details. Also see http://wp.me/p4qcHg-cO for more details of how to use this capability.
+
+Some minor fixes to IMU drivers.
+
 ### November 8 2014 - 2.4.0
 
 Added support for the InvenSense MPU-9250 using the I2C interface.
