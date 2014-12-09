@@ -103,6 +103,19 @@ public:
     int m_GD20M303DLHCCompassFsr;                           // the compass full scale range
 #endif
 
+#if defined(GD20HM303DLHC_6a) || defined(GD20HM303DLHC_6b)
+    int m_GD20HM303DLHCGyroSampleRate;                      // the gyro sample rate
+    int m_GD20HM303DLHCGyroBW;                              // the gyro bandwidth code
+    int m_GD20HM303DLHCGyroHpf;                             // the gyro high pass filter cutoff code
+    int m_GD20HM303DLHCGyroFsr;                             // the gyro full scale range
+
+    int m_GD20HM303DLHCAccelSampleRate;                     // the accel sample rate
+    int m_GD20HM303DLHCAccelFsr;                            // the accel full scale range
+
+    int m_GD20HM303DLHCCompassSampleRate;                   // the compass sample rate
+    int m_GD20HM303DLHCCompassFsr;                          // the compass full scale range
+#endif
+
 };
 
 #endif // _RTIMUSETTINGS_H

@@ -32,7 +32,7 @@
 #define L3GD20H_ADDRESS1        0x6b
 #define L3GD20H_ID              0xd7
 
-#define LSM303D_ADDRESS0        0x1c
+#define LSM303D_ADDRESS0        0x1e
 #define LSM303D_ADDRESS1        0x1d
 #define LSM303D_ID              0x49
 

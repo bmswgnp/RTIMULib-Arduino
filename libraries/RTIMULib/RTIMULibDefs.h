@@ -36,6 +36,8 @@
 //#define LSM9DS0_6b                      // LSM9DS0 at address 0x6b
 //#define GD20HM303D_6a                   // GD20H + M303D at address 0x6a
 //#define GD20HM303D_6b                   // GD20H + M303D at address 0x6b
+//#define GD20HM303DLHC_6a                // GD20H + M303DLHC at address 0x6a
+//#define GD20HM303DLHC_6b                // GD20H + M303DLHC at address 0x6b
 //#define GD20M303DLHC_6a                 // GD20 + M303DLHC at address 0x6a
 //#define GD20M303DLHC_6b                 // GD20 + M303DLHC at address 0x6b
 
@@ -44,8 +46,9 @@
 #define RTIMU_TYPE_MPU9150                  1                   // InvenSense MPU9150
 #define RTIMU_TYPE_LSM9DS0                  2                   // STM LSM9DS0 (eg Sparkfun IMU)
 #define RTIMU_TYPE_GD20HM303D               3                   // STM L3GD20H/LSM303D (Pololu Altimu)
-#define RTIMU_TYPE_GD20M303DLHC             4                   // STM L3GD20/LSM303DHLC (Adafruit IMU)
+#define RTIMU_TYPE_GD20M303DLHC             4                   // STM L3GD20/LSM303DHLC (old Adafruit IMU)
 #define RTIMU_TYPE_MPU9250                  5                   // InvenSense MPU9250
+#define RTIMU_TYPE_GD20HM303DLHC            6                   // STM L3GD20H/LSM303DHLC (new Adafruit IMU)
 
 //  Axis rotation defs
 //

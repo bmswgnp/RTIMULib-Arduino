@@ -1,6 +1,6 @@
 # RTIMULib-Arduino - a versatile 9-dof IMU library for the Arduino
 
-RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino and obtain full fused quaternion or Euler angle pose data.
+RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino and obtain fully fused quaternion or Euler angle pose data.
 
 Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncommenting one of the supported IMUs like this:
 
@@ -14,12 +14,18 @@ Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncomment
 	//#define GD20HM303D_6b                   // GD20H + M303D at address 0x6b
 	//#define GD20M303DLHC_6a                 // GD20 + M303DLHC at address 0x6a
 	//#define GD20M303DLHC_6b                 // GD20 + M303DLHC at address 0x6b
+	//#define GD20HM303DLHC_6a                // GD20H + M303DLHC at address 0x6a
+	//#define GD20HM303DLHC_6b                // GD20H + M303DLHC at address 0x6b
 
 Check out www.richards-tech.com for more details, updates and news.
 
 ## Release history
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
+
+### December 4 2014 - 2.6.0
+
+Added the L3GD20H + LSM303DLHC combination used by the updated Adafruit 10-dof IMU. Some small fixes to other drivers. 
 
 ### December 4 2014 - 2.5.0
 

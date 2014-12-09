@@ -32,7 +32,7 @@
 #define LSM9DS0_GYRO_ADDRESS1       0x6b
 #define LSM9DS0_GYRO_ID             0xd4
 
-#define LSM9DS0_ACCELMAG_ADDRESS0   0x1c
+#define LSM9DS0_ACCELMAG_ADDRESS0   0x1e
 #define LSM9DS0_ACCELMAG_ADDRESS1   0x1d
 #define LSM9DS0_ACCELMAG_ID         0x49
 
