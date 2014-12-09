@@ -22,7 +22,7 @@ Once this has been done, all example sketches will build for the selected IMU.
 The actual RTIMULib and support libraries are in the library directory. The other top level directories contain example sketches.
 
 *** Important note ***
-It is essential to calibrate the magnetometers or else very poor results will obtained, especially with the MPU-9150 and MPU-9250. If odd results are being obtained, suspect the magentometer calibration! 
+It is essential to calibrate the magnetometers or else very poor results will obtained, especially with the MPU-9150 and MPU-9250. If odd results are being obtained, suspect the magnetometer calibration! 
 
 ## The Example Sketches
 
