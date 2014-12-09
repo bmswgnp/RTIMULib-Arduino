@@ -106,7 +106,7 @@ void loop()
     if ((delta = now - lastRate) >= 1000) {
       Serial.print("Sample rate: "); Serial.print(sampleCount);
       if (!imu->IMUGyroBiasValid())
-        Serial.println(", calculating gyro bias - don't move IMU!!");
+        Serial.println(", calculating gyro bias");
       else
         Serial.println();
         

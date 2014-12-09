@@ -1,6 +1,6 @@
 # RTIMULib-Arduino - a versatile 9-dof IMU library for the Arduino
 
-RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino and obtain fully fused quaternion or Euler angle pose data.
+RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino (Uno or Mega) and obtain fully fused quaternion or Euler angle pose data.
 
 Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncommenting one of the supported IMUs like this:
 
@@ -16,6 +16,41 @@ Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncomment
 	//#define GD20M303DLHC_6b                 // GD20 + M303DLHC at address 0x6b
 	//#define GD20HM303DLHC_6a                // GD20H + M303DLHC at address 0x6a
 	//#define GD20HM303DLHC_6b                // GD20H + M303DLHC at address 0x6b
+
+Once this has been done, all example sketches will build for the selected IMU.
+
+The actual RTIMULib and support libraries are in the library directory. The other top level directories contain example sketches.
+
+*** Important note ***
+It is essential to calibrate the magnetometers or else very poor results will obtained, especially with the MPU-9150 and MPU-9250. If odd results are being obtained, suspect the magentometer calibration! 
+
+## The Example Sketches
+
+### Build and run
+
+To build and run the example sketches, start the Arduino IDE and use File --> Preferences and then set the sketchbook location to:
+
+	.../RTIMULib-Arduino
+
+where "..." represents the path to the RTIMULib-Arduino directory. The directory is set up so that there's no need to copy the libraries into the main Arduino libraries directory although this can be done if desired.
+
+### ArduinoMagCal
+
+This sketch can be used to calibrate the magnetometers and should be run before trying to generate fused pose data. It also needs to be rerun at any time that the configuration is changed (such as different IMU or different IMU reference orientation). Load the sketch and waggle the IMU around, making sure all axes reach their minima and maxima. The display will stop updating when this occurs. Then, enter 's' followed by enter into the IDE serial monitor to save the data.
+
+### ArduinoIMU
+
+ArduinoIMU is the main demo program. It configures the IMU based on settings in RTIMUSettings.cpp. Change these to alter any of the parameters. By default, it runs at 50 (MPU-9150) or 95 (LSM9DS0) gyro and accel samples per second. The display is updated only 3 times per second regardless of IMU sample rate.
+
+Note that, prior to version 2.2.0, the gyro bias is being calculated during the first 5 seconds. If the IMU is moved during this period, the bias calculation may be incorrect and the code will need to be restarted. Starting at version 2.2.0 this is no longer a problem and gyro bias will be reported as valid after the required number of stable samples have been obtained.
+
+### ArduinoAccel
+
+This is similar to ArduinoIMU except that it subtracts the rotated gravity vector from the accelerometer outputs in order to obtain the residual accelerations - i.e. those not attributable to gravity.
+
+### RTArduLinkIMU
+
+This sketch sends the fused data from the IMU over the Arduino's USB serial link to a host computer running either RTHostIMU or RTHostIMUGL (whcih can be found in the main RTIMULib repo). Basically just build and download the sketch and that's all that needs to be done. Magnetometer calibration can be performed either on the Arduino or within RTHostIMU/RTHostIMUGL.
 
 Check out www.richards-tech.com for more details, updates and news.
 
@@ -98,8 +133,3 @@ This version supports the InvenSense MPU-9150 and STM LSM9DS0 single chip IMUs. 
 
 (Pre-V2 only) The software will automatically discover the IMU type in use and also the address being used. This can be overridden in RTIMUSettings.cpp if desired.
 
-Two sketches are included. ArduinoMagCal can be used to store magnetometer calibration data. Load the sketch and waggle the IMU around, making sure all axes reach their minima and maxima. The display will stop updating when this occurs. Then, enter 's' followed by enter into the IDE serial monitor to save the data.
-
-ArduinoIMU is the main demo program. It configures the IMU based on settings in RTIMUSettings.cpp. Change these to alter any of the parameters. By default, it runs at 50 (MPU-9150) or 95 (LSM9DS0) gyro and accel samples per second. The display is updated only 3 times per second regardless of IMU sample rate.
-
-Note that, prior to version 2.2.0, the gyro bias is being calculated during the first 5 seconds. If the IMU is moved during this period, the bias calculation may be incorrect and the code will need to be restarted. Starting at version 2.2.0 this is no longer a problem and gyro bias will be reported as valid after the required number of stable samples have been obtained.

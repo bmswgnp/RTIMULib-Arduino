@@ -80,7 +80,7 @@ void loop()
       if (imu->IMUGyroBiasValid())
         Serial.println(", gyro bias valid");
       else
-        Serial.println(", calculating gyro bias - don't move IMU!!");
+        Serial.println(", calculating gyro bias");
         
       sampleCount = 0;
       lastRate = now;
