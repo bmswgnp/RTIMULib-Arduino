@@ -58,7 +58,7 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
-### December 4 2014 - 2.6.0
+### December 9 2014 - 2.6.0
 
 Added the L3GD20H + LSM303DLHC combination used by the updated Adafruit 10-dof IMU. Some small fixes to other drivers. 
 
