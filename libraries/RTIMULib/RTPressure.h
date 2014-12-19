@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-//  This file is part of RTPRESSURELib
+//  This file is part of RTIMULib-Arduino
 //
 //  Copyright (c) 2014, richards-tech
 //

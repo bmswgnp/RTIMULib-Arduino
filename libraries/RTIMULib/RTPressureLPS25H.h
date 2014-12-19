@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-//  This file is part of RTIMULib
+//  This file is part of RTIMULib-Arduino
 //
 //  Copyright (c) 2014, richards-tech
 //
