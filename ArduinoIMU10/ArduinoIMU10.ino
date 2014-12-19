@@ -26,10 +26,12 @@
 #include "RTIMUSettings.h"
 #include "RTIMU.h"
 #include "RTFusionRTQF.h" 
+#include "RTPressure.h"
 #include "CalLib.h"
 #include <EEPROM.h>
 
 RTIMU *imu;                                           // the IMU object
+RTPressure *pressure;                                 // the pressure object
 RTFusionRTQF fusion;                                  // the fusion object
 RTIMUSettings settings;                               // the settings object
 
@@ -52,10 +54,21 @@ void setup()
     Serial.begin(SERIAL_PORT_SPEED);
     Wire.begin();
     imu = RTIMU::createIMU(&settings);                        // create the imu object
-  
-    Serial.print("ArduinoIMU starting using device "); Serial.println(imu->IMUName());
+    pressure = RTPressure::createPressure(&settings);         // create the pressure sensor
+    
+    if (pressure == 0) {
+        Serial.println("No pressure sensor has been configured - terminating"); 
+        while (1) ;
+    }
+    
+    Serial.print("ArduinoIMU10 starting using IMU "); Serial.print(imu->IMUName());
+    Serial.print(", pressure sensor "); Serial.println(pressure->pressureName());
     if ((errcode = imu->IMUInit()) < 0) {
         Serial.print("Failed to init IMU: "); Serial.println(errcode);
+    }
+  
+    if ((errcode = pressure->pressureInit()) < 0) {
+        Serial.print("Failed to init pressure sensor: "); Serial.println(errcode);
     }
   
     if (imu->getCalibrationValid())
@@ -78,6 +91,8 @@ void loop()
 {  
     unsigned long now = millis();
     unsigned long delta;
+    float latestPressure;
+    float latestTemperature;
   
     if (imu->IMURead()) {                                // get the latest data if ready yet
         fusion.newIMUData(imu->getGyro(), imu->getAccel(), imu->getCompass(), imu->getTimestamp());
@@ -98,7 +113,12 @@ void loop()
 //          RTMath::display("Accel:", (RTVector3&)imu->getAccel());              // accel data
 //          RTMath::display("Mag:", (RTVector3&)imu->getCompass());              // compass data
             RTMath::displayRollPitchYaw("Pose:", (RTVector3&)fusion.getFusionPose()); // fused output
-           Serial.println();
+            
+            if (pressure->pressureRead(latestPressure, latestTemperature)) {
+                Serial.print(", pressure: "); Serial.print(latestPressure);
+                Serial.print(", temperature: "); Serial.print(latestTemperature);
+            }
+            Serial.println();
         }
     }
 }

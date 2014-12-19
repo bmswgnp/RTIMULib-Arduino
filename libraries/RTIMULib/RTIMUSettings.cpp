@@ -47,6 +47,14 @@
 #include "RTIMUGD20HM303DLHC.h"
 #endif
 
+#if defined(BMP180)
+#include "RTPressureBMP180.h"
+#endif
+
+#if defined(LPS25H_5c) || defined (LPS25H_5d)
+#include "RTPressureLPS25H.h"
+#endif
+
 #define RATE_TIMER_INTERVAL 2
 
 RTIMUSettings::RTIMUSettings()
@@ -252,6 +260,21 @@ RTIMUSettings::RTIMUSettings()
 
     m_imuType = RTIMU_TYPE_GD20HM303DLHC;
     m_I2CSlaveAddress = L3GD20H_ADDRESS1;
+#endif
+
+#ifdef BMP180
+    m_pressureType = RTPRESSURE_TYPE_BMP180;
+    m_I2CPressureAddress = BMP180_ADDRESS;
+#endif
+
+#ifdef LPS25H_5c
+    m_pressureType = RTPRESSURE_TYPE_LPS25H;
+    m_I2CPressureAddress = LPS25H_ADDRESS0;
+#endif
+
+#ifdef LPS25H_5d
+    m_pressureType = RTPRESSURE_TYPE_LPS25H;
+    m_I2CPressureAddress = LPS25H_ADDRESS1;
 #endif
 
 }

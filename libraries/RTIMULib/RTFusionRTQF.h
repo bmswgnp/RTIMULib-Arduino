@@ -43,6 +43,12 @@ public:
 
     void newIMUData(const RTVector3& gyro, const RTVector3& accel, const RTVector3& compass, unsigned long timestamp);
 
+    //  the following three functions control the influence of the gyro, accel and compass sensors
+
+    void setGyroEnable(bool enable) { m_enableGyro = enable;}
+    void setAccelEnable(bool enable) { m_enableAccel = enable; }
+    void setCompassEnable(bool enable) { m_enableCompass = enable;}
+
     //  the following two functions can be called to customize the noise covariance
 
     void setQ(RTFLOAT Q) {  m_Q = Q; reset();}
@@ -67,6 +73,10 @@ private:
     RTVector3 m_measuredPose;								// vector form of pose from measurement
     RTQuaternion m_fusionQPose;                             // quaternion form of pose from fusion
     RTVector3 m_fusionPose;                                 // vector form of pose from fusion
+
+    bool m_enableGyro;                                      // enables gyro as input
+    bool m_enableAccel;                                     // enables accel as input
+    bool m_enableCompass;                                   // enables compass a input
 
     bool m_firstTime;                                       // if first time after reset
     unsigned long m_lastFusionTime;                         // for delta time calculation

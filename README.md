@@ -1,6 +1,6 @@
-# RTIMULib-Arduino - a versatile 9-dof IMU library for the Arduino
+# RTIMULib-Arduino - a versatile 9-dof and 10-dof IMU library for the Arduino
 
-RTIMULib-Arduino is the simplest way to connect a 9-dof IMU to an Arduino (Uno or Mega) and obtain fully fused quaternion or Euler angle pose data.
+RTIMULib-Arduino is the simplest way to connect a 9-dof or 10-dof IMU to an Arduino (Uno or Mega) and obtain fully fused quaternion or Euler angle pose data.
 
 Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncommenting one of the supported IMUs like this:
 
@@ -18,6 +18,13 @@ Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncomment
 	//#define GD20HM303DLHC_6b                // GD20H + M303DLHC at address 0x6b
 
 Once this has been done, all example sketches will build for the selected IMU.
+
+To enable a pressure sensor, uncomment one of the following lines in libraries/RTIMULib/RTIMULibDefs.h:
+
+	//#define BMP180                          // BMP180
+	//#define LPS25H_5c                       // LPS25H at standard address
+	//#define LPS25H_5d                       // LPS25H at option address
+
 
 The actual RTIMULib and support libraries are in the library directory. The other top level directories contain example sketches.
 
@@ -44,6 +51,11 @@ ArduinoIMU is the main demo program. It configures the IMU based on settings in 
 
 Note that, prior to version 2.2.0, the gyro bias is being calculated during the first 5 seconds. If the IMU is moved during this period, the bias calculation may be incorrect and the code will need to be restarted. Starting at version 2.2.0 this is no longer a problem and gyro bias will be reported as valid after the required number of stable samples have been obtained.
 
+### ArduinoIMU10
+
+This is exactly the same as ArduinoIMU except that it adds support for a pressure sensor. One of the pressure sensors in libraries/RTIMULib/RTIMULibDefs.h must be uncommented for this sketch to run. It will display the current pressure and height above standard sea level in addition to pose information from the IMU.
+
+
 ### ArduinoAccel
 
 This is similar to ArduinoIMU except that it subtracts the rotated gravity vector from the accelerometer outputs in order to obtain the residual accelerations - i.e. those not attributable to gravity.
@@ -57,6 +69,13 @@ Check out www.richards-tech.com for more details, updates and news.
 ## Release history
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
+
+### December 19 2014 - 2.7.0
+
+Added support for pressure sensors.
+
+Added the ability to disable specific sensors from the fusion algorithm - setGyroEnable(), setAccelEnable and setCompassEnable() have been included in RTFusionRTQF.
+
 
 ### December 9 2014 - 2.6.0
 

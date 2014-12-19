@@ -25,6 +25,7 @@
 #define	_RTIMULIBDEFS_H
 
 #include "RTMath.h"
+#include "RTPressureDefs.h"
 
 //  IMU enable defs - only one should be enabled, the rest commented out
 
@@ -50,7 +51,13 @@
 #define RTIMU_TYPE_MPU9250                  5                   // InvenSense MPU9250
 #define RTIMU_TYPE_GD20HM303DLHC            6                   // STM L3GD20H/LSM303DHLC (new Adafruit IMU)
 
-//  Axis rotation defs
+//  Pressure enable defs - only one should be enabled, the rest commented out
+
+//#define BMP180                              // BMP180
+//#define LPS25H_5c                           // LPS25H at standard address
+//#define LPS25H_5d                           // LPS25H at option address
+
+//  IMU Axis rotation defs
 //
 //  These allow the IMU to be virtually repositioned if it is in a non-standard configuration
 //  Standard configuration is X pointing at north, Y pointing east and Z pointing down

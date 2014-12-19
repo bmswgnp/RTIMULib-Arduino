@@ -36,6 +36,8 @@ public:
 
     int m_imuType;                                          // type code of imu in use
     unsigned char m_I2CSlaveAddress;                        // I2C slave address of the imu
+    int m_pressureType;                                     // type code of pressure sensor in use
+    unsigned char m_I2CPressureAddress;                     // I2C slave address of the pressure sensor
 
     //  IMU-specific vars
 

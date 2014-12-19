@@ -39,6 +39,10 @@ RTFusionRTQF::RTFusionRTQF()
 {
     m_Q = RTQF_QVALUE;
     m_R = RTQF_RVALUE;
+    m_enableGyro = true;
+    m_enableAccel = true;
+    m_enableCompass = true;
+
     reset();
 }
 
@@ -57,6 +61,8 @@ void RTFusionRTQF::reset()
 
 void RTFusionRTQF::newIMUData(const RTVector3& gyro, const RTVector3& accel, const RTVector3& compass, unsigned long timestamp)
 {
+    RTVector3 fusionGyro;
+
     if (m_firstTime) {
         m_lastFusionTime = timestamp;
         calculatePose(accel, compass);
@@ -84,9 +90,14 @@ void RTFusionRTQF::newIMUData(const RTVector3& gyro, const RTVector3& accel, con
         qy = m_fusionQPose.y();
         qz = m_fusionQPose.z();
 
-        x2 = gyro.x() / (RTFLOAT)2.0;
-        y2 = gyro.y() / (RTFLOAT)2.0;
-        z2 = gyro.z() / (RTFLOAT)2.0;
+        if (m_enableGyro)
+            fusionGyro = gyro;
+        else
+            fusionGyro = RTVector3();
+
+        x2 = fusionGyro.x() / (RTFLOAT)2.0;
+        y2 = fusionGyro.y() / (RTFLOAT)2.0;
+        z2 = fusionGyro.z() / (RTFLOAT)2.0;
 
         // Predict new state
 
@@ -96,6 +107,12 @@ void RTFusionRTQF::newIMUData(const RTVector3& gyro, const RTVector3& accel, con
         m_fusionQPose.setZ(qz + (z2 * qs + y2 * qx - x2 * qy) * m_timeDelta);
 
 //      update();
+
+        if (m_enableCompass || m_enableAccel) {
+            m_stateQError = m_measuredQPose - m_fusionQPose;
+        } else {
+            m_stateQError = RTQuaternion();
+        }
 
         m_stateQError = m_measuredQPose - m_fusionQPose;
 
@@ -116,28 +133,36 @@ void RTFusionRTQF::calculatePose(const RTVector3& accel, const RTVector3& mag)
     RTQuaternion m;
     RTQuaternion q;
 
-    accel.accelToEuler(m_measuredPose);
+    if (m_enableAccel) {
+        accel.accelToEuler(m_measuredPose);
+    } else {
+        m_measuredPose = m_fusionPose;
+        m_measuredPose.setZ(0);
+    }
 
-//  q.fromEuler(m_measuredPose);
+    if (m_enableCompass) {
+        RTFLOAT cosX2 = cos(m_measuredPose.x() / 2.0f);
+        RTFLOAT sinX2 = sin(m_measuredPose.x() / 2.0f);
+        RTFLOAT cosY2 = cos(m_measuredPose.y() / 2.0f);
+        RTFLOAT sinY2 = sin(m_measuredPose.y() / 2.0f);
 
-    RTFLOAT cosX2 = cos(m_measuredPose.x() / 2.0f);
-    RTFLOAT sinX2 = sin(m_measuredPose.x() / 2.0f);
-    RTFLOAT cosY2 = cos(m_measuredPose.y() / 2.0f);
-    RTFLOAT sinY2 = sin(m_measuredPose.y() / 2.0f);
+        q.setScalar(cosX2 * cosY2);
+        q.setX(sinX2 * cosY2);
+        q.setY(cosX2 * sinY2);
+        q.setZ( - sinX2 * sinY2);
+        
+        //   normalize();
 
-    q.setScalar(cosX2 * cosY2);
-    q.setX(sinX2 * cosY2);
-    q.setY(cosX2 * sinY2);
-    q.setZ( - sinX2 * sinY2);
- //   normalize();
+        m.setScalar(0);
+        m.setX(mag.x());
+        m.setY(mag.y());
+        m.setZ(mag.z());
 
-    m.setScalar(0);
-    m.setX(mag.x());
-    m.setY(mag.y());
-    m.setZ(mag.z());
-
-    m = q * m * q.conjugate();
-    m_measuredPose.setZ(-atan2(m.y(), m.x()));
+        m = q * m * q.conjugate();
+        m_measuredPose.setZ(-atan2(m.y(), m.x()));
+    } else {
+        m_measuredPose.setZ(m_fusionPose.z());
+    }
 
     m_measuredQPose.fromEuler(m_measuredPose);
 
