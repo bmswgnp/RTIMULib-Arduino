@@ -78,7 +78,12 @@ bool RTArduLinkHALAddHardwarePort(RTARDULINKHAL_PORT *port, long portSpeed, unsi
 
     switch (hardwarePort) {
         case 0:
+#if defined(USBCON)
+            /* Leonardo support */
+            hardPort = &Serial1;
+#else
             hardPort = &Serial;
+#endif
             break;
 
         case 1:

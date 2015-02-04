@@ -70,6 +70,10 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### February 4 2015 - 2.7.1
+
+RTArduLink now compiles for Leonardo.
+
 ### December 19 2014 - 2.7.0
 
 Added support for pressure sensors.
