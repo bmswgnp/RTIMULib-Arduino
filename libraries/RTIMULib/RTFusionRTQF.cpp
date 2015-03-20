@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -42,7 +42,6 @@ RTFusionRTQF::RTFusionRTQF()
     m_enableGyro = true;
     m_enableAccel = true;
     m_enableCompass = true;
-
     reset();
 }
 
@@ -133,6 +132,8 @@ void RTFusionRTQF::calculatePose(const RTVector3& accel, const RTVector3& mag)
     RTQuaternion m;
     RTQuaternion q;
 
+    bool compassValid = (mag.x() != 0) || (mag.y() != 0) || (mag.z() != 0);
+
     if (m_enableAccel) {
         accel.accelToEuler(m_measuredPose);
     } else {
@@ -140,7 +141,7 @@ void RTFusionRTQF::calculatePose(const RTVector3& accel, const RTVector3& mag)
         m_measuredPose.setZ(0);
     }
 
-    if (m_enableCompass) {
+    if (m_enableCompass && compassValid) {
         RTFLOAT cosX2 = cos(m_measuredPose.x() / 2.0f);
         RTFLOAT sinX2 = sin(m_measuredPose.x() / 2.0f);
         RTFLOAT cosY2 = cos(m_measuredPose.y() / 2.0f);

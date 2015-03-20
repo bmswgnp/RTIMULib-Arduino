@@ -21,39 +21,49 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#ifndef _RTPRESSUREMS5611_H_
+#define _RTPRESSUREMS5611_H_
 
 #include "RTPressure.h"
 
-#if defined(BMP180)
-#include "RTPressureBMP180.h"
-#endif
-#if defined(LPS25H_5c) || defined(LPS25H_5d)
-#include "RTPressureLPS25H.h"
-#endif
-#if defined(MS5611_76) || defined(MS5611_77)
-#include "RTPressureMS5611.h"
-#endif
+//  State definitions
 
-RTPressure *RTPressure::createPressure(RTIMUSettings *settings)
+#define MS5611_STATE_IDLE               0
+#define MS5611_STATE_TEMPERATURE        1
+#define MS5611_STATE_PRESSURE           2
+
+class RTIMUSettings;
+
+class RTPressureMS5611 : public RTPressure
 {
-#if defined(BMP180)
-    return new RTPressureBMP180(settings);
-#endif
-#if defined(LPS25H_5c) || defined(LPS25H_5d)
-    return new RTPressureLPS25H(settings);
-#endif
-#if defined(MS5611_76) || defined(MS5611_77)
-    return new RTPressureMS5611(settings);
-#endif
-    return 0;
-}
+public:
+    RTPressureMS5611(RTIMUSettings *settings);
+    ~RTPressureMS5611();
 
+    virtual const char *pressureName() { return "MS5611"; }
+    virtual int pressureType() { return RTPRESSURE_TYPE_MS5611; }
+    virtual bool pressureInit();
+    virtual bool pressureRead(float &latestPressure, float &latestTemperature);
 
-RTPressure::RTPressure(RTIMUSettings *settings)
-{
-    m_settings = settings;
-}
+private:
+    void pressureBackground();
+    void setTestData();
 
-RTPressure::~RTPressure()
-{
-}
+    unsigned char m_pressureAddr;                           // I2C address
+    RTFLOAT m_pressure;                                     // the current pressure
+    RTFLOAT m_temperature;                                  // the current temperature
+
+    int m_state;
+
+    uint16_t m_calData[6];                                  // calibration data
+
+    uint32_t m_D1;
+    uint32_t m_D2;
+
+    long m_timer;                                           // used to time conversions
+
+    bool m_validReadings;
+};
+
+#endif // _RTPRESSUREMS5611_H_
+

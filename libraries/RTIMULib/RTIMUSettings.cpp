@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -53,6 +53,10 @@
 
 #if defined(LPS25H_5c) || defined (LPS25H_5d)
 #include "RTPressureLPS25H.h"
+#endif
+
+#if defined(MS5611_76) || defined (MS5611_77)
+#include "RTPressureMS5611.h"
 #endif
 
 #define RATE_TIMER_INTERVAL 2
@@ -275,6 +279,16 @@ RTIMUSettings::RTIMUSettings()
 #ifdef LPS25H_5d
     m_pressureType = RTPRESSURE_TYPE_LPS25H;
     m_I2CPressureAddress = LPS25H_ADDRESS1;
+#endif
+
+#ifdef MS5611_76
+    m_pressureType = RTPRESSURE_TYPE_MS5611;
+    m_I2CPressureAddress = MS5611_ADDRESS0;
+#endif
+
+#ifdef MS5611_77
+    m_pressureType = RTPRESSURE_TYPE_MS5611;
+    m_I2CPressureAddress = MS5611_ADDRESS1;
 #endif
 
 }

@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of 
 //  this software and associated documentation files (the "Software"), to deal in 
@@ -130,6 +130,7 @@ public:
     virtual int IMUGetPollInterval();
 
 private:
+    bool configureCompass();                                // configure the compass
     bool bypassOn();                                        // talk to compass
     bool bypassOff();                                       // talk to MPU9150
     bool setSampleRate();
@@ -150,6 +151,7 @@ private:
     RTFLOAT m_accelScale;
 
     RTFLOAT m_compassAdjust[3];                             // the compass fuse ROM values converted for use
+    bool m_compassPresent;                                  // false for MPU-6050
 };
 
 #endif // _RTIMUMPU9150_H

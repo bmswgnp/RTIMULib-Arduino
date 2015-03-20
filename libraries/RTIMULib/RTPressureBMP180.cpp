@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,8 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "RTPressureBMP180.h"
+
+#if defined(BMP180)
 
 RTPressureBMP180::RTPressureBMP180(RTIMUSettings *settings) : RTPressure(settings)
 {
@@ -222,3 +224,4 @@ void RTPressureBMP180::setTestData()
     m_rawTemperature = 27898;
     m_rawPressure = 23843;
 }
+#endif

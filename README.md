@@ -24,6 +24,8 @@ To enable a pressure sensor, uncomment one of the following lines in libraries/R
 	//#define BMP180                          // BMP180
 	//#define LPS25H_5c                       // LPS25H at standard address
 	//#define LPS25H_5d                       // LPS25H at option address
+	//#define MS5611_76                       // MS5611 at standard address
+	//#define MS5611_77                       // MS5611 at option address
 
 
 The actual RTIMULib and support libraries are in the library directory. The other top level directories contain example sketches.
@@ -69,6 +71,10 @@ Check out www.richards-tech.com for more details, updates and news.
 ## Release history
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
+
+### March 20 2015 - 2.8.1
+
+Added support for the MS5611 pressure sensor. Also extended the MPU-9150 driver so that it can also support the MPU-6050.
 
 ### February 4 2015 - 2.7.1
 

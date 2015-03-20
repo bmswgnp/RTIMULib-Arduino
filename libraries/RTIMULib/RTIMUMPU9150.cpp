@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -135,9 +135,9 @@ bool RTIMUMPU9150::setAccelFsr(unsigned char fsr)
 int RTIMUMPU9150::IMUInit()
 {
     unsigned char result;
-    unsigned char asa[3];
 
     m_firstTime = true;
+    m_compassPresent = true;
 
 #ifdef MPU9150_CACHE_MODE
     m_cacheIn = m_cacheOut = m_cacheCount = 0;
@@ -186,6 +186,31 @@ int RTIMUMPU9150::IMUInit()
 
     //  now configure compass
 
+    result = configureCompass();
+    if (result < 0)
+        return result;
+
+    //  enable the sensors
+
+    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_PWR_MGMT_1, 1))
+        return -28;
+
+    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_PWR_MGMT_2, 0))
+         return -29;
+
+    //  select the data to go into the FIFO and enable
+
+    if (!resetFifo())
+        return -30;
+
+    gyroBiasInit();
+    return 1;
+}
+
+bool RTIMUMPU9150::configureCompass()
+{
+    unsigned char asa[3];
+
     if (!bypassOn())
         return -11;
 
@@ -193,7 +218,11 @@ int RTIMUMPU9150::IMUInit()
 
     if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0)) {
         bypassOff();
-        return -12;
+
+        // Assume MPU-6050 here
+
+        m_compassPresent = false;
+        return 1;
     }
 
     if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0x0f)) {
@@ -255,20 +284,6 @@ int RTIMUMPU9150::IMUInit()
     if (!setCompassRate())
         return -27;
 
-    //  enable the sensors
-
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_PWR_MGMT_1, 1))
-        return -28;
-
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_PWR_MGMT_2, 0))
-         return -29;
-
-    //  select the data to go into the FIFO and enable
-
-    if (!resetFifo())
-        return -30;
-
-    gyroBiasInit();
     return 1;
 }
 
@@ -423,24 +438,31 @@ bool RTIMUMPU9150::IMURead()
 
     m_accel.setX(-m_accel.x());
 
-    //  use the fuse data adjustments for compass
+    if (m_compassPresent) {
+        //  use the fuse data adjustments for compass
 
-    m_compass.setX(m_compass.x() * m_compassAdjust[0]);
-    m_compass.setY(m_compass.y() * m_compassAdjust[1]);
-    m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
+        m_compass.setX(m_compass.x() * m_compassAdjust[0]);
+        m_compass.setY(m_compass.y() * m_compassAdjust[1]);
+        m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
 
-    //  sort out compass axes
+        //  sort out compass axes
 
-    float temp;
+        float temp;
 
-    temp = m_compass.x();
-    m_compass.setX(m_compass.y());
-    m_compass.setY(-temp);
+        temp = m_compass.x();
+        m_compass.setX(m_compass.y());
+        m_compass.setY(-temp);
+    } else {
+        m_compass.setX(0);
+        m_compass.setY(0);
+        m_compass.setZ(0);
+    }
 
     //  now do standard processing
 
     handleGyroBias();
-    calibrateAverageCompass();
+    if (m_compassPresent)
+        calibrateAverageCompass();
 
     if (m_firstTime)
         m_timestamp = millis();

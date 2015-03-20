@@ -2,7 +2,7 @@
 //
 //  This file is part of RTIMULib-Arduino
 //
-//  Copyright (c) 2014, richards-tech
+//  Copyright (c) 2014-2015, richards-tech
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -56,6 +56,8 @@
 //#define BMP180                              // BMP180
 //#define LPS25H_5c                           // LPS25H at standard address
 //#define LPS25H_5d                           // LPS25H at option address
+//#define MS5611_76                           // MS5611 at standard address
+//#define MS5611_77                           // MS5611 at option address
 
 //  IMU Axis rotation defs
 //
