@@ -210,40 +210,81 @@ int RTIMUMPU9150::IMUInit()
 bool RTIMUMPU9150::configureCompass()
 {
     unsigned char asa[3];
+    unsigned char id;
 
+    m_compassIs5883 = false;
+    m_compassDataLength = 8;
+    
     if (!bypassOn())
         return -11;
 
     // get fuse ROM data
 
     if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0)) {
-        bypassOff();
+        //  check to see if an HMC5883L is fitted
 
-        // Assume MPU-6050 here
+        if (!I2Cdev::readBytes(HMC5883_ADDRESS, HMC5883_ID, 1, &id)) {
+            bypassOff();
 
-        m_compassPresent = false;
-        return 1;
-    }
+            //  this is returning true so that MPU-6050 by itself will work
 
-    if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0x0f)) {
-        bypassOff();
-        return -13;
-    }
+            m_compassPresent = false;
+            return 1;
+        }
+        if (id != 0x48) {                                   // incorrect id for HMC5883L
 
-    if (!I2Cdev::readBytes(AK8975_ADDRESS, AK8975_ASAX, 3, asa)) {
-        bypassOff();
-        return -14;
-    }
+            bypassOff();
 
-    //  convert asa to usable scale factor
+            //  this is returning true so that MPU-6050 by itself will work
 
-    m_compassAdjust[0] = ((float)asa[0] - 128.0) / 256.0 + 1.0f;
-    m_compassAdjust[1] = ((float)asa[1] - 128.0) / 256.0 + 1.0f;
-    m_compassAdjust[2] = ((float)asa[2] - 128.0) / 256.0 + 1.0f;
+            m_compassPresent = false;
+            return 1;
+        }
 
-    if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0)) {
-        bypassOff();
-        return -15;
+        // HMC5883 is present - use that
+
+        if (!I2Cdev::writeByte(HMC5883_ADDRESS, HMC5883_CONFIG_A, 0x38)) {
+            bypassOff();
+            return -12;
+        }
+
+        if (!I2Cdev::writeByte(HMC5883_ADDRESS, HMC5883_CONFIG_B, 0x20)) {
+            bypassOff();
+            return -12;
+        }
+
+        if (!I2Cdev::writeByte(HMC5883_ADDRESS, HMC5883_MODE, 0x00)) {
+            bypassOff();
+            return -12;
+        }
+
+        Serial.println("Detected MPU-6050 with HMC5883");
+
+        m_compassDataLength = 6;
+        m_compassIs5883 = true;
+
+    } else {
+
+        if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0x0f)) {
+            bypassOff();
+            return -13;
+        }
+
+        if (!I2Cdev::readBytes(AK8975_ADDRESS, AK8975_ASAX, 3, asa)) {
+            bypassOff();
+            return -14;
+        }
+
+        //  convert asa to usable scale factor
+
+        m_compassAdjust[0] = ((float)asa[0] - 128.0) / 256.0 + 1.0f;
+        m_compassAdjust[1] = ((float)asa[1] - 128.0) / 256.0 + 1.0f;
+        m_compassAdjust[2] = ((float)asa[2] - 128.0) / 256.0 + 1.0f;
+
+        if (!I2Cdev::writeByte(AK8975_ADDRESS, AK8975_CNTL, 0)) {
+            bypassOff();
+            return -15;
+        }
     }
 
     if (!bypassOff())
@@ -254,26 +295,37 @@ bool RTIMUMPU9150::configureCompass()
     if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_MST_CTRL, 0x40))
         return -17;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_ADDR, 0x80 | AK8975_ADDRESS))
-        return -18;
+    if (m_compassIs5883) {
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_ADDR, 0x80 | HMC5883_ADDRESS))
+            return -18;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_REG, AK8975_ST1))
-        return -19;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_REG, HMC5883_DATA_X_HI))
+            return -19;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_CTRL, 0x88))
-        return -20;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_CTRL, 0x86))
+            return -20;
+    } else {
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_ADDR, 0x80 | AK8975_ADDRESS))
+            return -18;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_ADDR, AK8975_ADDRESS))
-        return -21;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_REG, AK8975_ST1))
+            return -19;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_REG, AK8975_CNTL))
-        return -22;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV0_CTRL, 0x88))
+            return -20;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_CTRL, 0x81))
-        return -23;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_ADDR, AK8975_ADDRESS))
+            return -21;
 
-    if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_DO, 0x1))
-        return -24;
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_REG, AK8975_CNTL))
+            return -22;
+
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_CTRL, 0x81))
+            return -23;
+
+        if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_SLV1_DO, 0x1))
+            return -24;
+    }
 
     if (!I2Cdev::writeByte(m_slaveAddr, MPU9150_I2C_MST_DELAY_CTRL, 0x3))
         return -25;
@@ -422,12 +474,17 @@ bool RTIMUMPU9150::IMURead()
     if (!I2Cdev::readBytes(m_slaveAddr, MPU9150_FIFO_R_W, MPU9150_FIFO_CHUNK_SIZE, fifoData))
         return false;
 
-    if (!I2Cdev::readBytes(m_slaveAddr, MPU9150_EXT_SENS_DATA_00, 8, compassData))
+    if (!I2Cdev::readBytes(m_slaveAddr, MPU9150_EXT_SENS_DATA_00, m_compassDataLength, compassData))
         return false;
 
     RTMath::convertToVector(fifoData, m_accel, m_accelScale, true);
     RTMath::convertToVector(fifoData + 6, m_gyro, m_gyroScale, true);
-    RTMath::convertToVector(compassData + 1, m_compass, 0.3f, false);
+
+    if (m_compassIs5883)
+        RTMath::convertToVector(compassData, m_compass, 0.092f, true);
+    else
+        RTMath::convertToVector(compassData + 1, m_compass, 0.3f, false);
+
 
     //  sort out gyro axes
 
@@ -439,19 +496,31 @@ bool RTIMUMPU9150::IMURead()
     m_accel.setX(-m_accel.x());
 
     if (m_compassPresent) {
-        //  use the fuse data adjustments for compass
+        if (m_compassIs5883) {
+            //  sort out compass axes
 
-        m_compass.setX(m_compass.x() * m_compassAdjust[0]);
-        m_compass.setY(m_compass.y() * m_compassAdjust[1]);
-        m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
+            float temp;
 
-        //  sort out compass axes
+            temp = m_compass.y();
+            m_compass.setY(-m_compass.z());
+            m_compass.setZ(-temp);
 
-        float temp;
+        } else {
 
-        temp = m_compass.x();
-        m_compass.setX(m_compass.y());
-        m_compass.setY(-temp);
+            //  use the compass fuse data adjustments
+
+            m_compass.setX(m_compass.x() * m_compassAdjust[0]);
+            m_compass.setY(m_compass.y() * m_compassAdjust[1]);
+            m_compass.setZ(m_compass.z() * m_compassAdjust[2]);
+
+            //  sort out compass axes
+
+            float temp;
+
+            temp = m_compass.x();
+            m_compass.setX(m_compass.y());
+            m_compass.setY(-temp);
+        }
     } else {
         m_compass.setX(0);
         m_compass.setY(0);

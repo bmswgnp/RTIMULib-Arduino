@@ -32,7 +32,10 @@
 #define MPU9150_ADDRESS1            0x69
 #define MPU9150_ID                  0x68
 
+//  these magnetometers are on aux bus
+
 #define AK8975_ADDRESS              0x0c
+#define HMC5883_ADDRESS             0x1e
 
 //  Register map
 
@@ -107,6 +110,15 @@
 #define AK8975_CNTL                 0x0a                    // control reg
 #define AK8975_ASAX                 0x10                    // start of the fuse ROM data
 
+//  HMC5883 compass registers
+
+#define HMC5883_CONFIG_A            0x00                    // configuration A
+#define HMC5883_CONFIG_B            0x01                    // configuration B
+#define HMC5883_MODE                0x02                    // mode
+#define HMC5883_DATA_X_HI           0x03                    // data x msb
+#define HMC5883_STATUS              0x09                    // status
+#define HMC5883_ID                  0x0a                    // id
+
 //  FIFO transfer size
 
 #define MPU9150_FIFO_CHUNK_SIZE     12                      // gyro and accels take 12 bytes
@@ -152,6 +164,8 @@ private:
 
     RTFLOAT m_compassAdjust[3];                             // the compass fuse ROM values converted for use
     bool m_compassPresent;                                  // false for MPU-6050
+    bool m_compassIs5883;                                   // if it is an MPU-6050/HMC5883 combo
+    int m_compassDataLength;                                // 8 for MPU-9150, 6 for HMC5883
 };
 
 #endif // _RTIMUMPU9150_H

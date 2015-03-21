@@ -2,6 +2,23 @@
 
 RTIMULib-Arduino is the simplest way to connect a 9-dof or 10-dof IMU to an Arduino (Uno or Mega) and obtain fully fused quaternion or Euler angle pose data.
 
+RTIMULib-Arduino currently supports the following IMUs via I2C:
+
+* InvenSense MPU-9150 single chip IMU.
+* InvenSense MPU-6050 plus HMC5883 magnetometer on MPU-6050's aux bus (handled by the MPU-9150 driver).
+* InvenSense MPU-6050 gyros + acclerometers. Treated as MPU-9150 without magnetometers.
+* InvenSense MPU-9250 single chip IMU
+* STM LSM9DS0 single chip IMU
+* L3GD20H + LSM303D (optionally with the LPS25H) as used on the Pololu AltIMU-10 v4.
+* L3GD20 + LSM303DLHC as used on the Adafruit 9-dof (older version with GD20 gyro) IMU. 
+* L3GD20H + LSM303DLHC (optionally with BMP180) as used on the new Adafruit 10-dof IMU.
+
+Pressure/temperature sensing is supported for the following pressure sensors:
+
+* BMP180
+* LPS25H
+* MS5611
+
 Select the IMU in use by editing libraries/RTIMULib/RTIMULibDefs.h and uncommenting one of the supported IMUs like this:
 
 	#define MPU9150_68                      // MPU9150 at address 0x68
@@ -71,6 +88,10 @@ Check out www.richards-tech.com for more details, updates and news.
 ## Release history
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
+
+### March 21 2015 - 2.9.0
+
+Added support for MPU6050 + HMC5883 IMUs (HMC5883 on MPU-6050's aux bus).
 
 ### March 20 2015 - 2.8.1
 

@@ -57,7 +57,7 @@
 //#define LPS25H_5c                           // LPS25H at standard address
 //#define LPS25H_5d                           // LPS25H at option address
 //#define MS5611_76                           // MS5611 at standard address
-//#define MS5611_77                           // MS5611 at option address
+#define MS5611_77                           // MS5611 at option address
 
 //  IMU Axis rotation defs
 //
