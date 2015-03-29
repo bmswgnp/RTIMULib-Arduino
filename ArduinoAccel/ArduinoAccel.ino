@@ -81,8 +81,12 @@ void loop()
   RTQuaternion rotatedGravity;
   RTQuaternion fusedConjugate;
   RTQuaternion qTemp;
+  int loopCount = 0;
   
-  if (imu->IMURead()) {                                // get the latest data if ready yet
+  while (imu->IMURead()) {                              // get the latest data if ready yet
+    // this flushes remaining data in case we are falling behind
+    if (++loopCount >= 10)
+      continue;
     fusion.newIMUData(imu->getGyro(), imu->getAccel(), imu->getCompass(), imu->getTimestamp());
     
     //  do gravity rotation and subtraction

@@ -25,20 +25,32 @@
 
 #include "RTFusionRTQF.h"
 
+#ifdef USE_SLERP
+//  The slerp power valule controls the influence of the measured state to correct the predicted state
+//  0 = measured state ignored (just gyros), 1 = measured state overrides predicted state.
+//  In between 0 and 1 mixes the two conditions
+
+#define RTQF_SLERP_POWER (RTFLOAT)0.02;
+
+#else
 //  The QVALUE affects the gyro response.
 
-#define RTQF_QVALUE	0.001f
+#define RTQF_QVALUE	(RTFLOAT)0.001
 
 //  The RVALUE controls the influence of the accels and compass.
 //  The bigger the value, the more sluggish the response.
 
-#define RTQF_RVALUE	0.0005f
-
+#define RTQF_RVALUE	(RTFLOAT)0.0005
+#endif
 
 RTFusionRTQF::RTFusionRTQF()
 {
+#ifdef USE_SLERP
+    m_slerpPower = RTQF_SLERP_POWER;
+#else
     m_Q = RTQF_QVALUE;
     m_R = RTQF_RVALUE;
+#endif
     m_enableGyro = true;
     m_enableAccel = true;
     m_enableCompass = true;
@@ -107,19 +119,48 @@ void RTFusionRTQF::newIMUData(const RTVector3& gyro, const RTVector3& accel, con
 
 //      update();
 
+#ifdef USE_SLERP
+        if (m_enableCompass || m_enableAccel) {
+
+            // calculate rotation delta
+
+            m_rotationDelta = m_fusionQPose.conjugate() * m_measuredQPose;
+            m_rotationDelta.normalize();
+
+            // take it to the power (0 to 1) to give the desired amount of correction
+
+            RTFLOAT theta = acos(m_rotationDelta.scalar());
+
+            RTFLOAT sinPowerTheta = sin(theta * m_slerpPower);
+            RTFLOAT cosPowerTheta = cos(theta * m_slerpPower);
+
+            m_rotationUnitVector.setX(m_rotationDelta.x());
+            m_rotationUnitVector.setY(m_rotationDelta.y());
+            m_rotationUnitVector.setZ(m_rotationDelta.z());
+            m_rotationUnitVector.normalize();
+
+            m_rotationPower.setScalar(cosPowerTheta);
+            m_rotationPower.setX(sinPowerTheta * m_rotationUnitVector.x());
+            m_rotationPower.setY(sinPowerTheta * m_rotationUnitVector.y());
+            m_rotationPower.setZ(sinPowerTheta * m_rotationUnitVector.z());
+            m_rotationPower.normalize();
+
+            //  multiple this by predicted value to get result
+
+            m_fusionQPose *= m_rotationPower;
+        }
+#else
         if (m_enableCompass || m_enableAccel) {
             m_stateQError = m_measuredQPose - m_fusionQPose;
         } else {
             m_stateQError = RTQuaternion();
         }
-
-        m_stateQError = m_measuredQPose - m_fusionQPose;
-
         // make new state estimate
 
         RTFLOAT qt = m_Q * m_timeDelta;
 
         m_fusionQPose += m_stateQError * (qt / (qt + m_R));
+#endif
 
         m_fusionQPose.normalize();
 

@@ -78,8 +78,12 @@ void loop()
 {  
     unsigned long now = millis();
     unsigned long delta;
+    int loopCount = 1;
   
-    if (imu->IMURead()) {                                // get the latest data if ready yet
+    while (imu->IMURead()) {                                // get the latest data if ready yet
+        // this flushes remaining data in case we are falling behind
+        if (++loopCount >= 10)
+            continue;
         fusion.newIMUData(imu->getGyro(), imu->getAccel(), imu->getCompass(), imu->getTimestamp());
         sampleCount++;
         if ((delta = now - lastRate) >= 1000) {

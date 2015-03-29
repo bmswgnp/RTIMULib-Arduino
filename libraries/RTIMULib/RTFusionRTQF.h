@@ -28,6 +28,10 @@
 
 #include "RTMath.h"
 
+//  Define this symbol to use more scientific prediction correction
+
+#define USE_SLERP
+
 class RTFusionRTQF
 {
 public:
@@ -49,11 +53,15 @@ public:
     void setAccelEnable(bool enable) { m_enableAccel = enable; }
     void setCompassEnable(bool enable) { m_enableCompass = enable;}
 
+#ifdef USE_SLERP
+    //  the following function can be called to set the SLERP power
+    void setSlerpPower(RTFLOAT power) { m_slerpPower = power; }
+#else
     //  the following two functions can be called to customize the noise covariance
 
     void setQ(RTFLOAT Q) {  m_Q = Q; reset();}
     void setR(RTFLOAT R) { if (R > 0) m_R = R; reset();}
-
+#endif
     inline const RTVector3& getMeasuredPose() {return m_measuredPose;}
     inline const RTQuaternion& getMeasuredQPose() {return m_measuredQPose;}
     inline const RTVector3& getFusionPose() {return m_fusionPose;}
@@ -66,9 +74,15 @@ private:
 
     RTQuaternion m_stateQError;                             // difference between stateQ and measuredQ
 
+#ifdef USE_SLERP
+    RTFLOAT m_slerpPower;                                   // a value 0 to 1 that controls measured state influence
+    RTQuaternion m_rotationDelta;                           // amount by which measured state differs from predicted
+    RTQuaternion m_rotationPower;                           // delta raised to the appopriate power
+    RTVector3 m_rotationUnitVector;                         // the vector part of the rotation delta
+#else
     RTFLOAT m_Q;                                            // process noise covariance
     RTFLOAT m_R;                                            // the measurement noise covariance
-
+#endif
     RTQuaternion m_measuredQPose;       					// quaternion form of pose from measurement
     RTVector3 m_measuredPose;								// vector form of pose from measurement
     RTQuaternion m_fusionQPose;                             // quaternion form of pose from fusion

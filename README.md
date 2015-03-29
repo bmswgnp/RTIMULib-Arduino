@@ -89,6 +89,10 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### March 29 2015 - 3.0.0
+
+Changed RTQF state correction mechanism to use quaternion SLERP. This is a little experimental - if you encounter problems, please use the 2.9.0 release (from the Releases tab).
+
 ### March 21 2015 - 2.9.0
 
 Added support for MPU6050 + HMC5883 IMUs (HMC5883 on MPU-6050's aux bus).

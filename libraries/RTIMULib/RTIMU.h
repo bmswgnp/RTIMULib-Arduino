@@ -103,11 +103,11 @@ protected:
 
     RTVector3 m_previousAccel;                              // previous step accel for gyro learning
 
-    float m_compassCalOffset[3];
-    float m_compassCalScale[3];
+    RTFLOAT m_compassCalOffset[3];
+    RTFLOAT m_compassCalScale[3];
     RTVector3 m_compassAverage;                             // a running average to smooth the mag outputs
 
-    static float m_axisRotation[9];                         // axis rotation matrix
+    static RTFLOAT m_axisRotation[9];                         // axis rotation matrix
 
  };
 
