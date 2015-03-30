@@ -89,7 +89,7 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
-### March 29 2015 - 3.0.1
+### March 30 2015 - 3.0.1
 
 Removed high speed square root code form RTMath due to inaccuracy.
 
