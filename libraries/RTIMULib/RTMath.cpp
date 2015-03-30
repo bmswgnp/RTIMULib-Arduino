@@ -58,23 +58,6 @@ void RTMath::display(const char *label, RTQuaternion& quat)
     Serial.print(" z:"); Serial.print(quat.z());
 }
 
-RTFLOAT RTMath::invSqRt(RTFLOAT x)
-{
-    long i;
-    float x2, y;
-    void *temp;
-
-    x2 = x * 0.5f;
-    y = x;
-    temp = &y;
-    i = *(long *)temp;
-    i = 0x5f3759df - (i >> 1);
-    temp = &i;
-    y = *(float *)temp;
-    y = y * (1.5f - (x2 * y * y));
-    return y;
-}
-
 RTVector3 RTMath::poseFromAccelMag(const RTVector3& accel, const RTVector3& mag)
 {
     RTVector3 result;
@@ -215,26 +198,21 @@ void RTVector3::accelToQuaternion(RTQuaternion& qPose) const
 
 void RTVector3::normalize()
 {
-    RTFLOAT invLength = RTMath::invSqRt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2]);
+    RTFLOAT length = (RTFLOAT)pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+        m_data[2] * m_data[2], 0.5);
 
-    if ((invLength == 0) || (invLength == 1))
+    if ((length == 0) || (length == 1))
         return;
 
-    m_data[0] *= invLength;
-    m_data[1] *= invLength;
-    m_data[2] *= invLength;
+    m_data[0] *= length;
+    m_data[1] *= length;
+    m_data[2] *= length;
 }
 
 RTFLOAT RTVector3::length()
 {
-    RTFLOAT invLength = RTMath::invSqRt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2]);
-
-    if (invLength == 0)
-        return 0;
-    else
-        return 1/invLength;
+    return (RTFLOAT)pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2], 0.5);
 }
 
 #endif // #ifndef RTARDULINK_MODE
@@ -299,27 +277,14 @@ RTQuaternion& RTQuaternion::operator -=(const RTFLOAT val)
 
 RTQuaternion& RTQuaternion::operator *=(const RTQuaternion& qb)
 {
-    RTVector3 va;
-    RTVector3 vb;
-    RTFLOAT dotAB;
-    RTVector3 crossAB;
+    RTQuaternion qa;
 
-    va.setX(m_data[1]);
-    va.setY(m_data[2]);
-    va.setZ(m_data[3]);
+    qa = *this;
 
-    vb.setX(qb.x());
-    vb.setY(qb.y());
-    vb.setZ(qb.z());
-
-    dotAB = RTVector3::dotProduct(va, vb);
-    RTVector3::crossProduct(va, vb, crossAB);
-    RTFLOAT myScalar = m_data[0];
-
-    m_data[0] = myScalar * qb.scalar() - dotAB;
-    m_data[1] = myScalar * vb.x() + qb.scalar() * va.x() + crossAB.x();
-    m_data[2] = myScalar * vb.y() + qb.scalar() * va.y() + crossAB.y();
-    m_data[3] = myScalar * vb.z() + qb.scalar() * va.z() + crossAB.z();
+    m_data[0] = qa.scalar() * qb.scalar() - qa.x() * qb.x() - qa.y() * qb.y() - qa.z() * qb.z();
+    m_data[1] = qa.scalar() * qb.x() + qa.x() * qb.scalar() + qa.y() * qb.z() - qa.z() * qb.y();
+    m_data[2] = qa.scalar() * qb.y() - qa.x() * qb.z() + qa.y() * qb.scalar() + qa.z() * qb.x();
+    m_data[3] = qa.scalar() * qb.z() + qa.x() * qb.y() - qa.y() * qb.x() + qa.z() * qb.scalar();
 
     return *this;
 }
@@ -374,16 +339,16 @@ void RTQuaternion::zero()
 
 void RTQuaternion::normalize()
 {
-    RTFLOAT invLength = RTMath::invSqRt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2] + m_data[3] * m_data[3]);
+    RTFLOAT length = pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2] + m_data[3] * m_data[3], 0.5);
 
-    if ((invLength == 0) || (invLength == 1))
+    if ((length == 0) || (length == 1))
         return;
 
-    m_data[0] *= invLength;
-    m_data[1] *= invLength;
-    m_data[2] *= invLength;
-    m_data[3] *= invLength;
+    m_data[0] /= length;
+    m_data[1] /= length;
+    m_data[2] /= length;
+    m_data[3] /= length;
 }
 
 void RTQuaternion::toEuler(RTVector3& vec)

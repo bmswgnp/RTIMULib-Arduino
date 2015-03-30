@@ -30,7 +30,7 @@
 //  0 = measured state ignored (just gyros), 1 = measured state overrides predicted state.
 //  In between 0 and 1 mixes the two conditions
 
-#define RTQF_SLERP_POWER (RTFLOAT)0.02;
+#define RTQF_SLERP_POWER (RTFLOAT)0.5;
 
 #else
 //  The QVALUE affects the gyro response.
@@ -179,7 +179,6 @@ void RTFusionRTQF::calculatePose(const RTVector3& accel, const RTVector3& mag)
         accel.accelToEuler(m_measuredPose);
     } else {
         m_measuredPose = m_fusionPose;
-        m_measuredPose.setZ(0);
     }
 
     if (m_enableCompass && compassValid) {

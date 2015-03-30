@@ -66,11 +66,6 @@ public:
 
     static void convertToVector(unsigned char *rawData, RTVector3& vec, RTFLOAT scale, bool bigEndian);
 
-    //  Fast inverse quare root (as used by Madgwick http://www.x-io.co.uk/res/sw/madgwick_algorithm_c.zip
-    //  and as described in http://en.wikipedia.org/wiki/Fast_inverse_square_root
-
-    static RTFLOAT invSqRt(RTFLOAT x);
-
 private:
     static char m_string[1000];                             // for the display routines
 #endif // #ifndef RTARDULINK_MODE
