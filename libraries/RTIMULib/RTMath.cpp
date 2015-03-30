@@ -198,8 +198,8 @@ void RTVector3::accelToQuaternion(RTQuaternion& qPose) const
 
 void RTVector3::normalize()
 {
-    RTFLOAT length = (RTFLOAT)pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-        m_data[2] * m_data[2], 0.5);
+    RTFLOAT length = (RTFLOAT)sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+        m_data[2] * m_data[2]);
 
     if ((length == 0) || (length == 1))
         return;
@@ -211,8 +211,8 @@ void RTVector3::normalize()
 
 RTFLOAT RTVector3::length()
 {
-    return (RTFLOAT)pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2], 0.5);
+    return (RTFLOAT)sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2]);
 }
 
 #endif // #ifndef RTARDULINK_MODE
@@ -339,8 +339,8 @@ void RTQuaternion::zero()
 
 void RTQuaternion::normalize()
 {
-    RTFLOAT length = pow(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
-            m_data[2] * m_data[2] + m_data[3] * m_data[3], 0.5);
+    RTFLOAT length = sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] +
+            m_data[2] * m_data[2] + m_data[3] * m_data[3]);
 
     if ((length == 0) || (length == 1))
         return;
