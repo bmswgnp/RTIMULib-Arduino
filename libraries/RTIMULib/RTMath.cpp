@@ -204,9 +204,9 @@ void RTVector3::normalize()
     if ((length == 0) || (length == 1))
         return;
 
-    m_data[0] *= length;
-    m_data[1] *= length;
-    m_data[2] *= length;
+    m_data[0] /= length;
+    m_data[1] /= length;
+    m_data[2] /= length;
 }
 
 RTFLOAT RTVector3::length()
