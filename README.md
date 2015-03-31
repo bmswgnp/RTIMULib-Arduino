@@ -89,6 +89,10 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### March 31 2015 - 3.0.4
+
+Add line showing how to set the Slerp power in the demo sketches.
+
 ### March 31 2015 - 3.0.3
 
 Adjusted gyro bias calculation to stop after valid bias achieved.

@@ -65,6 +65,12 @@ void setup()
 
     lastDisplay = lastRate = millis();
     sampleCount = 0;
+
+    // Slerp power controls the fusion and can be between 0 and 1
+    // 0 means that only gyros are used, 1 means that only accels/compass are used
+    // In-between gives the fusion mix.
+    
+    fusion.setSlerpPower(0.02);
     
     // use of sensors in the fusion algorithm can be controlled here
     // change any of these to false to disable that sensor
