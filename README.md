@@ -89,6 +89,10 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### March 31 2015 - 3.0.3
+
+Adjusted gyro bias calculation to stop after valid bias achieved.
+
 ### March 30 2015 - 3.0.2
 
 Fixed error in vector normalization introduced at 3.0.1.

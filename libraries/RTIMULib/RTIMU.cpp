@@ -298,22 +298,24 @@ void RTIMU::handleGyroBias()
     }
 #endif
     
-    RTVector3 deltaAccel = m_previousAccel;
-    deltaAccel -= m_accel;   // compute difference
-    m_previousAccel = m_accel;
+    if (!m_gyroBiasValid) {
+        RTVector3 deltaAccel = m_previousAccel;
+        deltaAccel -= m_accel;   // compute difference
+        m_previousAccel = m_accel;
 
-    if ((deltaAccel.squareLength() < RTIMU_FUZZY_ACCEL_ZERO_SQUARED) && 
-                (m_gyro.squareLength() < RTIMU_FUZZY_GYRO_ZERO_SQUARED)) {
-        // what we are seeing on the gyros should be bias only so learn from this
-        m_gyroBias.setX((1.0 - m_gyroAlpha) * m_gyroBias.x() + m_gyroAlpha * m_gyro.x());
-        m_gyroBias.setY((1.0 - m_gyroAlpha) * m_gyroBias.y() + m_gyroAlpha * m_gyro.y());
-        m_gyroBias.setZ((1.0 - m_gyroAlpha) * m_gyroBias.z() + m_gyroAlpha * m_gyro.z());
+        if ((deltaAccel.squareLength() < RTIMU_FUZZY_ACCEL_ZERO_SQUARED) &&
+            (m_gyro.squareLength() < RTIMU_FUZZY_GYRO_ZERO_SQUARED)) {
+            // what we are seeing on the gyros should be bias only so learn from this
+            m_gyroBias.setX((1.0 - m_gyroAlpha) * m_gyroBias.x() + m_gyroAlpha * m_gyro.x());
+            m_gyroBias.setY((1.0 - m_gyroAlpha) * m_gyroBias.y() + m_gyroAlpha * m_gyro.y());
+            m_gyroBias.setZ((1.0 - m_gyroAlpha) * m_gyroBias.z() + m_gyroAlpha * m_gyro.z());
 
-        if (m_gyroSampleCount < (5 * m_sampleRate)) {
-            m_gyroSampleCount++;
+            if (m_gyroSampleCount < (5 * m_sampleRate)) {
+                m_gyroSampleCount++;
 
-            if (m_gyroSampleCount == (5 * m_sampleRate)) {
-                m_gyroBiasValid = true;
+                if (m_gyroSampleCount == (5 * m_sampleRate)) {
+                    m_gyroBiasValid = true;
+                }
             }
         }
     }
