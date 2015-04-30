@@ -89,6 +89,10 @@ Check out www.richards-tech.com for more details, updates and news.
 
 Note that any older release can be obtained via the Releases tab on the repo's GitHub page.
 
+### April 30 2015 - 3.0.5
+
+Added second order temperature compensation for MS5611.
+
 ### March 31 2015 - 3.0.4
 
 Add line showing how to set the Slerp power in the demo sketches.
